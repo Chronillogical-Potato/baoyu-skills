@@ -58,6 +58,17 @@ test("validateSkillReleaseCommit rejects non-conventional skill commit subjects"
   assert.match(formatSkillReleaseFailures(failures), /fix\(baoyu-post-to-wechat\):/);
 });
 
+test("validateSkillReleaseCommit allows documented legacy exception", () => {
+  assert.deepEqual(
+    validateSkillReleaseCommit({
+      commit: "6b7a2e417500561a5ecdd0b168332f4142584617",
+      subject: "Legacy skill update",
+      paths: ["skills/baoyu-wechat-summary/SKILL.md"],
+    }),
+    [],
+  );
+});
+
 test("validateSkillReleaseCommit accepts conventional skill commit subjects", () => {
   assert.deepEqual(
     validateSkillReleaseCommit({

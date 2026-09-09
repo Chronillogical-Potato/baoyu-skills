@@ -1,6 +1,10 @@
 const SKILL_PATH_PATTERN = /^skills\/([^/]+)\//;
 const CONVENTIONAL_SUBJECT_PATTERN =
   /^(?<type>[a-z][a-z0-9-]*)(?:\((?<scope>[^()\n]+)\))?(?<breaking>!)?: (?<description>\S[\s\S]*)$/;
+const LEGACY_SKILL_RELEASE_COMMIT_EXCEPTIONS = new Set([
+  // Landed on main before the commit guard could be fixed without rewriting public history.
+  "6b7a2e417500561a5ecdd0b168332f4142584617",
+]);
 
 export function parseConventionalCommitSubject(subject) {
   const match = CONVENTIONAL_SUBJECT_PATTERN.exec(subject.trim());
@@ -27,6 +31,7 @@ export function changedSkillsForPaths(paths) {
 export function validateSkillReleaseCommit({ commit = "", subject, paths }) {
   const skills = changedSkillsForPaths(paths);
   if (skills.length === 0) return [];
+  if (LEGACY_SKILL_RELEASE_COMMIT_EXCEPTIONS.has(commit)) return [];
 
   const parsed = parseConventionalCommitSubject(subject);
   if (parsed) return [];
